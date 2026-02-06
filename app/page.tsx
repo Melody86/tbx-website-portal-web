@@ -5,6 +5,9 @@ import { StoreLinks, type StoreLinkItem } from "@/components/store-links"
 import { LazyVideo } from "@/components/lazy-video"
 import { apiGet } from "@/lib/api"
 
+/** 首页依赖后端 API，构建时后端可能不可用，改为请求时渲染 */
+export const dynamic = "force-dynamic"
+
 type HomeBanner = {
   id: number
   type: "image" | "video"

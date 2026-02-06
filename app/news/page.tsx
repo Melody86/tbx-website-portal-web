@@ -6,6 +6,9 @@ import { getStaticUrl } from "@/lib/static"
 import { NewsListPagination } from "@/components/news-list-pagination"
 import { NewsTypeTabs, type NewsTypeOption } from "@/components/news-type-tabs"
 
+/** 依赖后端 API，构建时可能不可用，改为请求时渲染 */
+export const dynamic = "force-dynamic"
+
 type NewsItem = {
   id: number
   title: string

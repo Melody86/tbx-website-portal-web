@@ -1,8 +1,10 @@
+const path = require("path");
+
 module.exports = {
   apps: [
     {
-      name: "tubaxian-website",
-      cwd: "/Users/ryan/tbx/tubaxian-website",
+      name: "tubaxian-portal",
+      cwd: path.join(__dirname),
       script: "pnpm",
       args: "start",
       env: {

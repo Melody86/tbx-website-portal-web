@@ -1,6 +1,9 @@
 import { apiGet } from "@/lib/api"
 import { ProductsGrid, type ProductListItem } from "@/components/products-grid"
 
+/** 依赖后端 API，构建时可能不可用，改为请求时渲染 */
+export const dynamic = "force-dynamic"
+
 type ProductApi = {
   id: number
   category: string
