@@ -3,7 +3,6 @@ import { ArrowLeft, ShoppingCart, Heart, Share2, Star } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
 import { Card, CardContent } from "@/components/ui/card"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { apiGet } from "@/lib/api"
 import { getStaticUrl } from "@/lib/static"
 import { RecordVisitView } from "@/components/record-visit-view"
@@ -187,38 +186,16 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
           </div>
         </div>
 
-        {/* Product Details Tabs */}
-        <div className="mb-16">
-          <Tabs defaultValue="details" className="w-full">
-            <TabsList className="w-full justify-start border-b rounded-none h-auto p-0 bg-transparent">
-              <TabsTrigger
-                value="details"
-                className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent"
-              >
-                产品详情
-              </TabsTrigger>
-              <TabsTrigger
-                value="reviews"
-                className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent"
-              >
-                用户评价
-              </TabsTrigger>
-            </TabsList>
-            <TabsContent value="details" className="mt-6">
-              <div
-                className="prose prose-lg max-w-none"
-                dangerouslySetInnerHTML={{ __html: product.detail ?? "" }}
-                style={{
-                  color: "var(--color-foreground)",
-                }}
-              />
-            </TabsContent>
-            <TabsContent value="reviews" className="mt-6">
-              <div className="text-center py-12 text-muted-foreground">
-                <p>暂无评价，成为第一个评价的用户吧！</p>
-              </div>
-            </TabsContent>
-          </Tabs>
+        {/* Product Details - 标题 + 正文，无 Tab、无用户评价模块 */}
+        <div className="mb-16 border-t border-border pt-8">
+          <h2 className="text-2xl md:text-3xl font-serif font-bold mb-4">产品详情</h2>
+          <div
+            className="prose prose-lg max-w-none"
+            dangerouslySetInnerHTML={{ __html: product.detail ?? "" }}
+            style={{
+              color: "var(--color-foreground)",
+            }}
+          />
         </div>
 
         {/* Related Products */}

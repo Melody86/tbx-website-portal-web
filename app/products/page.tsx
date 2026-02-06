@@ -21,13 +21,52 @@ type ProductListResponse = {
   total: number
 }
 
-async function fetchProducts(): Promise<ProductListItem[]> {
-  const res = await apiGet<ProductListResponse>("/tbx/product/list", {
-    pageNum: 1,
-    pageSize: 100,
+type DictData = {
+  dictLabel: string
+  dictValue: string
+  dictSort?: number
+}
+
+/** 产品分类选项：id=字典值(dictValue)，name=中文(dictLabel) */
+async function fetchProductCategoryOptions(): Promise<{ id: string; name: string }[]> {
+  try {
+    const res = await apiGet<DictData[]>("/system/dict/data/type/tbx_product_category")
+    if (!Array.isArray(res)) return []
+    return res
+      .filter((item) => item.dictValue != null && item.dictValue !== "")
+      .sort((a, b) => (a.dictSort ?? 0) - (b.dictSort ?? 0))
+      .map((item) => ({
+        id: item.dictValue,
+        name: item.dictLabel || item.dictValue,
+      }))
+  } catch {
+    return []
+  }
+}
+
+async function fetchProductCategoryLabelMap(): Promise<Record<string, string>> {
+  const list = await fetchProductCategoryOptions()
+  const map: Record<string, string> = {}
+  list.forEach((c) => {
+    map[c.id] = c.name
+  })
+  return map
+}
+
+const PRODUCT_PAGE_SIZE = 12
+
+async function fetchProducts(
+  categoryMap: Record<string, string>,
+  category: string | undefined,
+  pageNum: number
+): Promise<{ list: ProductListItem[]; total: number }> {
+  const productRes = await apiGet<ProductListResponse>("/tbx/product/list", {
+    pageNum,
+    pageSize: PRODUCT_PAGE_SIZE,
+    ...(category ? { category } : {}),
   })
 
-  return (res.list || []).map((p) => {
+  const list = (productRes.list || []).map((p) => {
     let image = "/placeholder.jpg"
     if (p.image_gallery) {
       try {
@@ -45,15 +84,39 @@ async function fetchProducts(): Promise<ProductListItem[]> {
       id: p.id,
       name: p.productname,
       category: p.category,
+      categoryLabel: categoryMap[p.category] ?? p.category,
       price: p.saleprice,
       originalPrice: p.marketprice,
       image,
       description: p.description,
     }
   })
+  return { list, total: productRes.total ?? 0 }
 }
 
-export default async function ProductsPage() {
-  const products = await fetchProducts()
-  return <ProductsGrid products={products} />
+type ProductsPageProps = {
+  searchParams: Promise<{ category?: string; page?: string }>
+}
+
+export default async function ProductsPage({ searchParams }: ProductsPageProps) {
+  const params = await searchParams
+  const category = params.category ?? undefined
+  const pageNum = Math.max(1, parseInt(params.page ?? "1", 10) || 1)
+
+  const [categoryOptions, categoryMap] = await Promise.all([
+    fetchProductCategoryOptions(),
+    fetchProductCategoryLabelMap(),
+  ])
+  const { list: products, total } = await fetchProducts(categoryMap, category, pageNum)
+
+  return (
+    <ProductsGrid
+      products={products}
+      categories={categoryOptions}
+      selectedCategory={category || "all"}
+      total={total}
+      currentPage={pageNum}
+      pageSize={PRODUCT_PAGE_SIZE}
+    />
+  )
 }

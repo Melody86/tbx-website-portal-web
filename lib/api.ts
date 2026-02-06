@@ -18,6 +18,16 @@ function ensureSuccess(json: ApiResponse, url: string): void {
   }
 }
 
+function wrapFetchError(err: unknown, url: string): Error {
+  const message =
+    err instanceof TypeError && err.message === 'fetch failed'
+      ? `无法连接后端 API（${url}）。请确认：1) 后端服务已启动；2) 环境变量 NEXT_PUBLIC_API_BASE_URL 是否正确（当前: ${API_BASE}）`
+      : err instanceof Error
+        ? err.message
+        : String(err);
+  return new Error(message);
+}
+
 export async function apiGet<T>(path: string, query?: Query, init?: RequestInit): Promise<T> {
   const url = new URL(`${API_BASE}${path}`);
 
@@ -28,10 +38,15 @@ export async function apiGet<T>(path: string, query?: Query, init?: RequestInit)
     });
   }
 
-  const res = await fetch(url.toString(), {
-    cache: 'no-store',
-    ...init,
-  });
+  let res: Response;
+  try {
+    res = await fetch(url.toString(), {
+      cache: 'no-store',
+      ...init,
+    });
+  } catch (err) {
+    throw wrapFetchError(err, url.toString());
+  }
 
   if (!res.ok) {
     throw new Error(`API 请求失败: ${res.status} ${res.statusText} - ${url.toString()}`);
@@ -45,12 +60,17 @@ export async function apiGet<T>(path: string, query?: Query, init?: RequestInit)
 
 export async function apiPost<T>(path: string, body: unknown, init?: RequestInit): Promise<T> {
   const url = `${API_BASE}${path}`;
-  const res = await fetch(url, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json', ...(init?.headers as HeadersInit) },
-    body: JSON.stringify(body),
-    ...init,
-  });
+  let res: Response;
+  try {
+    res = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', ...(init?.headers as HeadersInit) },
+      body: JSON.stringify(body),
+      ...init,
+    });
+  } catch (err) {
+    throw wrapFetchError(err, url);
+  }
   const json = (await res.json()) as ApiResponse;
   if (!res.ok) {
     throw new Error(json.msg ?? `请求失败: ${res.status} - ${url}`);
