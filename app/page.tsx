@@ -115,10 +115,6 @@ async function fetchHomeData() {
 
 export default async function HomePage() {
   const { slides, stats, hot, storeLinks } = await fetchHomeData()
-  console.log("slides", slides)
-  console.log("stats", stats)
-  console.log("hot", hot)
-  console.log("storeLinks", storeLinks)
 
   return (
     <main>
@@ -127,10 +123,11 @@ export default async function HomePage() {
       
 
       {/* About Section */}
-      <section className="py-16 md:py-24">
+      <section className="py-16 md:py-24 bg-card/50">
         <div className="container mx-auto px-4">
           <div className="max-w-3xl mx-auto text-center">
-            <h2 className="text-3xl md:text-4xl font-serif font-bold text-primary mb-6">关于土八鲜</h2>
+            <h2 className="text-3xl md:text-4xl font-serif font-bold text-primary mb-2">关于土八鲜</h2>
+            <p className="text-muted-foreground mb-8 text-base">土八鲜，为您而土</p>
             <p className="text-lg text-muted-foreground leading-relaxed mb-6">
               瑞金市土八鲜电子商务有限公司于2016年6月成立，土八鲜以服务三农为初心，专注于整合本地农产品，进行生产、加工及线上销售，公司主营产品有赣南脐橙、脐橙米酒、赣南白莲、手工笋干、山茶油等特色农产品。
             </p>

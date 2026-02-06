@@ -27,9 +27,9 @@ export function StoreLinks({ stores }: StoreLinksProps) {
               href={store.url}
               target="_blank"
               rel="noopener noreferrer"
-              className="bg-card rounded-lg p-6 flex flex-col items-center justify-center gap-4 hover:shadow-lg transition-shadow group"
+              className="bg-card rounded-lg p-6 flex flex-col items-center justify-center gap-4 hover:shadow-lg hover:border-primary/20 border border-transparent transition-all duration-200 group"
             >
-              <img src={getStaticUrl(store.logo) || "/placeholder.svg"} alt={store.name} className="w-16 h-16 object-contain" />
+              <img src={getStaticUrl(store.logo) || "/placeholder.svg"} alt={store.name} className="w-16 h-16 object-contain select-none" />
               <div className="text-center">
                 <div className="font-semibold mb-1">{store.name}</div>
                 <ExternalLink className="h-4 w-4 mx-auto text-muted-foreground group-hover:text-primary transition-colors" />

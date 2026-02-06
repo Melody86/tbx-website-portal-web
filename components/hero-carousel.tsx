@@ -56,7 +56,7 @@ export function HeroCarousel({ slides }: HeroCarouselProps) {
       {slides.map((slide, index) => (
         <div
           key={index}
-          className={`absolute inset-0 transition-opacity duration-700 ${
+          className={`absolute inset-0 transition-opacity duration-700 ease-out ${
             index === currentSlide ? "opacity-100" : "opacity-0"
           }`}
         >
@@ -127,15 +127,17 @@ export function HeroCarousel({ slides }: HeroCarouselProps) {
       </Button>
 
       {/* Dots Indicator */}
-      <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex gap-2">
+      <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex gap-2" role="tablist" aria-label="轮播指示器">
         {slides.map((_, index) => (
           <button
             key={index}
-            onClick={() => goToSlide(index)}
-            className={`w-2 h-2 rounded-full transition-all ${
-              index === currentSlide ? "bg-white w-8" : "bg-white/50 hover:bg-white/75"
-            }`}
+            role="tab"
+            aria-selected={index === currentSlide}
             aria-label={`跳转到第 ${index + 1} 张`}
+            onClick={() => goToSlide(index)}
+            className={`h-2 rounded-full transition-[width,background-color] duration-300 ease-out ${
+              index === currentSlide ? "bg-white w-8" : "w-2 bg-white/50 hover:bg-white/75"
+            }`}
           />
         ))}
       </div>
